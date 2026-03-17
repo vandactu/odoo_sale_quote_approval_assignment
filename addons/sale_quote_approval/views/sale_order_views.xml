@@ -1,0 +1,50 @@
+<odoo>
+    <record id="view_order_form_inherit_approval" model="ir.ui.view">
+        <field name="name">sale.order.form.approval</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='client_order_ref']" position="after">
+                <field name="approval_type" readonly="1"/>
+                <field name="approval_state" readonly="1" invisible="approval_type == 'none'"/>
+            </xpath>
+
+            <xpath expr="//header" position="inside">
+                <field name="approval_type" invisible="1"/>
+                <field name="approval_state" invisible="1" />
+                <button name="action_request_approval"
+                        type="object"
+                        string="Request Approval"
+                        class="btn-primary"
+                        invisible="approval_type not in ['leader', 'full'] or approval_state != 'draft' or state not in ('draft', 'sent')"/>
+
+                <button name="action_approve_leader"
+                        type="object"
+                        string="Approve Leader"
+                        groups="sale_quote_approval.group_sales_team_leader"
+                        invisible="approval_state != 'pending_leader'"/>
+
+                <button name="action_approve_manager"
+                        type="object"
+                        string="Approve Manager"
+                        groups="sale_quote_approval.group_sales_manager"
+                        invisible="approval_state != 'pending_manager'"/>
+
+                <button name="action_approve_finance"
+                        type="object"
+                        string="Approve Finance"
+                        groups="sale_quote_approval.group_finance_manager"
+                        invisible="approval_state != 'pending_finance'"/>
+
+                <button name="action_reject_approval"
+                        type="object"
+                        string="Reject"
+                        class="btn-secondary"
+                        groups="sale_quote_approval.group_sales_team_leader,sale_quote_approval.group_sales_manager,sale_quote_approval.group_finance_manager"
+                        invisible="approval_state not in ('pending_leader', 'pending_manager', 'pending_finance')"/>
+
+            </xpath>
+
+        </field>
+    </record>
+</odoo>
